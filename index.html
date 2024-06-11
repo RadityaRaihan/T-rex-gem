@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" onkeypress="lompat()">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Dokumen</title>
+  </head>
+  <body>
+    <div class="box" id="box">
+      <div class="score" id="score">Skor : 0</div>
+      <div class="highscore" id="highscore">Skor Tertinggi : 0</div>
+      <img src="dino.png" alt="Dino" id="dino" />
+      <img src="cactus.png" alt="Kaktus" id="cactus" />
+      <div class="roadContainer" id="roadContainer">
+        <img src="road.png" alt="Jalan" />
+      </div>
+    </div>
+  </body>
+  <script>
+    const dino = document.getElementById("dino");
+    const cactus = document.getElementById("cactus");
+    const playerScore = document.getElementById("score");
+    const highscoreDisplay = document.getElementById("highscore");
+
+    let score = 0;
+    let interval = null;
+
+    // Ambil highscore dari localStorage
+    let highscore = localStorage.getItem("highscore") || 0;
+    highscoreDisplay.innerHTML = `Skor Tertinggi : ${highscore}`;
+
+    let jumlahScore = () => {
+      score++;
+      playerScore.innerHTML = `Skor : ${score}`;
+    };
+
+    function lompat() {
+      if (!dino.classList.contains("animate")) {
+        dino.classList.add("animate");
+      }
+      setTimeout(function () {
+        dino.classList.remove("animate");
+      }, 500);
+      if (!interval) {
+        interval = setInterval(jumlahScore, 100);
+      }
+    }
+
+    const jikaMenabrakKaktus = setInterval(function () {
+      const dinoTop = parseInt(window.getComputedStyle(dino).getPropertyValue("top"));
+      const cactusLeft = parseInt(window.getComputedStyle(cactus).getPropertyValue("left"));
+      if (cactusLeft < 90 && cactusLeft > 0 && dinoTop >= 60) {
+        cactus.style.animation = "none";
+        cactus.style.display = "none";
+
+        // Cek dan perbarui highscore
+        if (score > highscore) {
+          highscore = score;
+          localStorage.setItem("highscore", highscore);
+          highscoreDisplay.innerHTML = `Skor Tertinggi : ${highscore}`;
+        }
+
+        if (confirm("Dino kamu nabrak. Ulangi permainan?")) {
+          window.location.reload();
+        }
+      }
+    }, 10);
+  </script>
+</html>
